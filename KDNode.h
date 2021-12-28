@@ -37,6 +37,8 @@ public:
 
     [[nodiscard]] double coord(size_t axis_) const { return m_coords[axis_]; }
 
+    [[nodiscard]] std::vector<double> coords() const { return m_coords; }
+
     [[nodiscard]] inline size_t get_dim() const noexcept { return m_dim; }
 
     [[nodiscard]] inline T get_data() const noexcept { return m_data; }
@@ -46,6 +48,22 @@ public:
     [[nodiscard]] inline size_t next_axis() const noexcept
     {
         return (m_axis+1)%m_dim;
+    }
+
+    [[nodiscard]] double dist(const std::shared_ptr<KDNode<T>> other) const
+    {
+        return dist(other->m_coords);
+    }
+
+    [[nodiscard]] double dist(const std::vector<double>& coords_) const
+    {
+        double acc = 0;
+        for (int i = 0; i < m_dim; i++) {
+            auto d = m_coords[i] - coords_[i];
+            acc += d*d;
+        }
+        acc = sqrt(acc);
+        return acc;
     }
 };
 
