@@ -20,6 +20,8 @@ private:
 
     size_t m_axis;
 
+    std::vector<double> m_subspace;
+
 public:
     KDNode(std::vector<double> coords_, T data_, size_t axis_)
         : m_coords(std::move(coords_)), m_axis(axis_), m_data(data_)
@@ -27,13 +29,27 @@ public:
         m_dim = m_coords.size();
         m_left = nullptr;
         m_right = nullptr;
+
+        for (int i = 0; i < m_dim*2; i++)
+            m_subspace.emplace_back(std::numeric_limits<double>::infinity() * (i%2==0?-1:1));
     }
 
     inline std::shared_ptr<KDNode<T>> right() { return m_right; }
     inline std::shared_ptr<KDNode<T>> left() { return m_left; }
 
-    inline void set_right(std::shared_ptr<KDNode<T>> node_) { m_right = node_; }
-    inline void set_left(std::shared_ptr<KDNode<T>> node_) { m_left = node_; }
+    inline void set_right(std::shared_ptr<KDNode<T>> node_)
+    {
+        node_->m_subspace = m_subspace;
+        node_->m_subspace[m_axis*2] = m_coords[m_axis];
+        m_right = node_;
+    }
+
+    inline void set_left(std::shared_ptr<KDNode<T>> node_)
+    {
+        node_->m_subspace = m_subspace;
+        node_->m_subspace[m_axis*2 + 1] = m_coords[m_axis];
+        m_left = node_;
+    }
 
     [[nodiscard]] double coord(size_t axis_) const { return m_coords[axis_]; }
 
