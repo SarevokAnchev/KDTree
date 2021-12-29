@@ -81,6 +81,12 @@ public:
         acc = sqrt(acc);
         return acc;
     }
+
+    [[nodiscard]] double dist_to_subspace(const std::vector<double>& subspace_) const
+    {
+        // TODO
+        return 0;
+    }
 };
 
 
