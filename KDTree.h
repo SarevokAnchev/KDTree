@@ -5,6 +5,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include "KDNode.h"
 
@@ -59,7 +60,33 @@ public:
 
     std::shared_ptr<KDNode<T>> get_closest_node(const std::vector<double>& coords_) const
     {
+        if (!m_root) {
+            return nullptr;
+        }
+        // descend in the tree
+        std::vector<std::shared_ptr<KDNode<T>>> path;
+        auto ptr_next = m_root;
+        while (ptr_next) {
+            auto axis = ptr_next->get_axis();
+            path.emplace_back(ptr_next);
+            if (ptr_next->coord(axis) > coords_[axis]) {
+                ptr_next = ptr_next->left();
+            }
+            else {
+                ptr_next = ptr_next->right();
+            }
+        }
 
+        // ascend and compare distances
+        auto idx = path.size() - 1;
+        std::shared_ptr<KDNode<T>> cur_node = path[idx];
+        std::shared_ptr<KDNode<T>> cur_best = path.back();
+        auto min_dist = cur_best->dist(coords_);
+        auto found = false;
+        while (!found && cur_node != m_root) {
+            
+        }
+        return cur_best;
     }
 };
 
