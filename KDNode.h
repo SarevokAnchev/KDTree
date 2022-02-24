@@ -55,11 +55,11 @@ public:
 
     [[nodiscard]] std::vector<double> coords() const { return m_coords; }
 
-    [[nodiscard]] inline size_t get_dim() const noexcept { return m_dim; }
+    [[nodiscard]] inline size_t dim() const noexcept { return m_dim; }
 
-    [[nodiscard]] inline T get_data() const noexcept { return m_data; }
+    [[nodiscard]] inline T data() const noexcept { return m_data; }
 
-    [[nodiscard]] inline size_t get_axis() const noexcept { return m_axis; }
+    [[nodiscard]] inline size_t axis() const noexcept { return m_axis; }
 
     [[nodiscard]] inline size_t next_axis() const noexcept
     {
@@ -86,6 +86,15 @@ public:
     {
         // TODO
         return 0;
+    }
+
+    [[nodiscard]] bool in_subspace(const std::vector<double>& subspace_) const
+    {
+        for (int i = 0; i < m_dim; i++) {
+            if (m_coords[i] < subspace_[i*2] || m_coords[i] > subspace_[i*2 + 1])
+                return false;
+        }
+        return true;
     }
 };
 
