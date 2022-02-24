@@ -20,7 +20,8 @@ private:
 
     size_t m_axis;
 
-    std::vector<double> m_subspace;
+    std::vector<double> m_subspace_left;
+    std::vector<double> m_subspace_right;
 
 public:
     KDNode(std::vector<double> coords_, T data_, size_t axis_)
@@ -84,8 +85,16 @@ public:
 
     [[nodiscard]] double dist_to_subspace(const std::vector<double>& subspace_) const
     {
-        // TODO
-        return 0;
+        std::vector<double> dist(m_dim, 0);
+        for (int i = 0; i < m_dim; i++) {
+            if (m_coords[i] < subspace_[i*2] || m_coords[i] > subspace_[i*2 + 1])
+                dist[i] = 0;
+            else
+                dist[i] = std::min(subspace_[i*2] - m_coords[i], subspace_[i*2 + 1] - m_coords[i]);
+        }
+        double acc = 0;
+        for (int i = 0; i < m_dim; i++) acc += dist[i]*dist[i];
+        return sqrt(acc);
     }
 
     [[nodiscard]] bool in_subspace(const std::vector<double>& subspace_) const
@@ -97,5 +106,3 @@ public:
         return true;
     }
 };
-
-
