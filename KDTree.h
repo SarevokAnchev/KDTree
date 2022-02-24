@@ -16,6 +16,11 @@ private:
 
     size_t m_dim;
 
+    std::shared_ptr<KDNode<T>> _explore_from_top(const std::vector<double>& coords, double* best_dist)
+    {
+        // TODO : DFS
+    }
+
 public:
     KDTree()
         : m_root(nullptr), m_dim(0)
@@ -65,15 +70,18 @@ public:
         }
         // descend in the tree
         std::vector<std::shared_ptr<KDNode<T>>> path;
+        bool last_branch_right = true;
         auto ptr_next = m_root;
         while (ptr_next) {
             auto axis = ptr_next->get_axis();
             path.emplace_back(ptr_next);
             if (ptr_next->coord(axis) > coords_[axis]) {
                 ptr_next = ptr_next->left();
+                last_branch_right = false;
             }
             else {
                 ptr_next = ptr_next->right();
+                last_branch_right = true;
             }
         }
 
@@ -84,9 +92,8 @@ public:
         auto min_dist = cur_best->dist(coords_);
         auto found = false;
         while (!found && cur_node != m_root) {
-            
+
         }
         return cur_best;
     }
 };
-
