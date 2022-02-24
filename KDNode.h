@@ -20,8 +20,7 @@ private:
 
     size_t m_axis;
 
-    std::vector<double> m_subspace_left;
-    std::vector<double> m_subspace_right;
+    std::vector<double> m_subspace;
 
 public:
     KDNode(std::vector<double> coords_, T data_, size_t axis_)
