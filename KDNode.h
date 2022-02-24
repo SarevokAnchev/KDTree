@@ -22,9 +22,11 @@ private:
 
     std::vector<double> m_subspace;
 
+    bool m_is_right = true;
+
 public:
-    KDNode(std::vector<double> coords_, T data_, size_t axis_)
-        : m_coords(std::move(coords_)), m_axis(axis_), m_data(data_)
+    KDNode(std::vector<double> coords_, T data_, size_t axis_, bool is_right=true)
+        : m_coords(std::move(coords_)), m_axis(axis_), m_data(data_), m_is_right(is_right)
     {
         m_dim = m_coords.size();
         m_left = nullptr;
@@ -41,6 +43,7 @@ public:
     {
         node_->m_subspace = m_subspace;
         node_->m_subspace[m_axis*2] = m_coords[m_axis];
+        node_->set_is_right(true);
         m_right = node_;
     }
 
@@ -48,8 +51,13 @@ public:
     {
         node_->m_subspace = m_subspace;
         node_->m_subspace[m_axis*2 + 1] = m_coords[m_axis];
+        node_->set_is_right(false);
         m_left = node_;
     }
+
+    inline void set_is_right(bool r) { m_is_right = r; }
+
+    [[nodiscard]] inline bool is_right() const { return m_is_right; }
 
     [[nodiscard]] double coord(size_t axis_) const { return m_coords[axis_]; }
 
