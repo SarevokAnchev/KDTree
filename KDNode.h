@@ -94,10 +94,10 @@ public:
     {
         std::vector<double> dist(m_dim, 0);
         for (int i = 0; i < m_dim; i++) {
-            if (m_coords[i] < subspace_[i*2] || m_coords[i] > subspace_[i*2 + 1])
+            if (m_coords[i] > subspace_[i*2] && m_coords[i] < subspace_[i*2 + 1])
                 dist[i] = 0;
             else
-                dist[i] = std::min(subspace_[i*2] - m_coords[i], subspace_[i*2 + 1] - m_coords[i]);
+                dist[i] = std::min(std::abs(subspace_[i*2] - m_coords[i]), std::abs(subspace_[i*2 + 1] - m_coords[i]));
         }
         double acc = 0;
         for (int i = 0; i < m_dim; i++) acc += dist[i]*dist[i];
@@ -108,10 +108,10 @@ public:
     {
         std::vector<double> dist(m_dim, 0);
         for (int i = 0; i < m_dim; i++) {
-            if (point[i] < m_subspace[i*2] || point[i] > m_subspace[i*2 + 1])
+            if (point[i] > m_subspace[i*2] && point[i] < m_subspace[i*2 + 1])
                 dist[i] = 0;
             else
-                dist[i] = std::min(m_subspace[i*2] - point[i], m_subspace[i*2 + 1] - point[i]);
+                dist[i] = std::min(std::abs(m_subspace[i*2] - point[i]), std::abs(m_subspace[i*2 + 1] - point[i]));
         }
         double acc = 0;
         for (int i = 0; i < m_dim; i++) acc += dist[i]*dist[i];
