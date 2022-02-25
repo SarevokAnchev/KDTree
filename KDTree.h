@@ -16,9 +16,22 @@ private:
 
     size_t m_dim;
 
-    std::shared_ptr<KDNode<T>> _explore_from_top(const std::vector<double>& coords, double* best_dist)
+    void _explore_from_top(const std::vector<double>& coords, std::shared_ptr<KDNode<T>> node,
+                           std::shared_ptr<KDNode<T>> best_node, double* best_dist) const
     {
-        // TODO : DFS
+        if (best_node->subspace_dist_to_point(coords) > *best_dist)
+            return;
+        auto cur_dist = node->dist(coords);
+        if (cur_dist < *best_dist) {
+            *best_dist = cur_dist;
+            best_node = node;
+        }
+        if (node->right() && node->right()->subspace_dist_to_point(coords) < *best_dist) {
+            _explore_from_top(coords, node->right(), best_node, best_dist);
+        }
+        if (node->left() && node->left()->subspace_dist_to_point(coords) < *best_dist) {
+            _explore_from_top(coords, node->left(), best_node, best_dist);
+        }
     }
 
 public:
@@ -44,7 +57,7 @@ public:
         std::shared_ptr<KDNode<T>> ptr_next = m_root;
         std::shared_ptr<KDNode<T>> ptr_prev;
         while (!placed) {
-            auto axis = ptr_next->get_axis();
+            auto axis = ptr_next->axis();
             ptr_prev = ptr_next;
             if (ptr_next->coord(axis) > coords_[axis]) {
                 ptr_next = ptr_next->left();
@@ -73,7 +86,7 @@ public:
         bool last_branch_right = true;
         auto ptr_next = m_root;
         while (ptr_next) {
-            auto axis = ptr_next->get_axis();
+            auto axis = ptr_next->axis();
             path.emplace_back(ptr_next);
             if (ptr_next->coord(axis) > coords_[axis]) {
                 ptr_next = ptr_next->left();
@@ -86,13 +99,23 @@ public:
         }
 
         // ascend and compare distances
-        auto idx = path.size() - 1;
-        std::shared_ptr<KDNode<T>> cur_node = path[idx];
+        int idx = path.size() - 1;
         std::shared_ptr<KDNode<T>> cur_best = path.back();
         auto min_dist = cur_best->dist(coords_);
-        auto found = false;
-        while (!found && cur_node != m_root) {
-
+        while (idx >= 0) {
+            auto d = path[idx]->dist(coords_);
+            if (d < min_dist) {
+                min_dist = d;
+                cur_best = path[idx];
+            }
+            if (last_branch_right && path[idx]->left()) {
+                _explore_from_top(coords_, path[idx]->left(), cur_best, &min_dist);
+            }
+            else if (path[idx]->right()){
+                _explore_from_top(coords_, path[idx]->right(), cur_best, &min_dist);
+            }
+            last_branch_right = path[idx]->is_right();
+            idx--;
         }
         return cur_best;
     }
