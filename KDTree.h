@@ -17,9 +17,9 @@ private:
     size_t m_dim;
 
     void _explore_from_top(const std::vector<double>& coords, std::shared_ptr<KDNode<T>> node,
-                           std::shared_ptr<KDNode<T>> best_node, double* best_dist) const
+                           std::shared_ptr<KDNode<T>>& best_node, double* best_dist) const
     {
-        if (best_node->subspace_dist_to_point(coords) > *best_dist)
+        if (node->subspace_dist_to_point(coords) > *best_dist)
             return;
         auto cur_dist = node->dist(coords);
         if (cur_dist < *best_dist) {
