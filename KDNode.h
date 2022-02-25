@@ -104,6 +104,20 @@ public:
         return sqrt(acc);
     }
 
+    [[nodiscard]] double subspace_dist_to_point(const std::vector<double> point) const
+    {
+        std::vector<double> dist(m_dim, 0);
+        for (int i = 0; i < m_dim; i++) {
+            if (point[i] < m_subspace[i*2] || point[i] > m_subspace[i*2 + 1])
+                dist[i] = 0;
+            else
+                dist[i] = std::min(m_subspace[i*2] - point[i], m_subspace[i*2 + 1] - point[i]);
+        }
+        double acc = 0;
+        for (int i = 0; i < m_dim; i++) acc += dist[i]*dist[i];
+        return sqrt(acc);
+    }
+
     [[nodiscard]] bool in_subspace(const std::vector<double>& subspace_) const
     {
         for (int i = 0; i < m_dim; i++) {
