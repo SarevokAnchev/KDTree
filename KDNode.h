@@ -104,7 +104,7 @@ public:
         return sqrt(acc);
     }
 
-    [[nodiscard]] double subspace_dist_to_point(const std::vector<double> point) const
+    [[nodiscard]] double subspace_dist_to_point(const std::vector<double>& point) const
     {
         std::vector<double> dist(m_dim, 0);
         for (int i = 0; i < m_dim; i++) {
