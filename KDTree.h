@@ -6,6 +6,8 @@
 
 #include <memory>
 #include <vector>
+#include <algorithm>
+#include <random>
 
 #include "KDNode.h"
 
@@ -36,17 +38,27 @@ private:
 
 public:
     KDTree()
-        : m_root(nullptr), m_dim(0)
+            : m_root(nullptr), m_dim(0)
     {}
 
-    void add_nodes(std::vector<std::vector<double>> coords_, std::vector<T> data_)
+    void add_nodes(const std::vector<std::vector<double>>& coords_, const std::vector<T>& data_, bool shuffle=false)
     {
-        for (int i = 0; i < coords_.size(); i++) {
-            add_node(coords_[i], data_[i]);
+        if (shuffle) {
+            std::vector<size_t> indices(coords_.size());
+            for (auto i = 0; i < coords_.size(); i++) indices[i] = i;
+            std::shuffle(indices.begin(), indices.end(), std::default_random_engine{});
+            for (auto i: indices) {
+                add_node(coords_[i], data_[i]);
+            }
+        }
+        else {
+            for (int i = 0; i < coords_.size(); i++) {
+                add_node(coords_[i], data_[i]);
+            }
         }
     }
 
-    void add_node(std::vector<double> coords_, T data_)
+    void add_node(const std::vector<double>& coords_, const T& data_)
     {
         if (!m_root) {
             m_root = std::make_shared<KDNode<T>>(coords_, data_, 0);
