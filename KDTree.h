@@ -36,6 +36,23 @@ private:
         }
     }
 
+    void _explore_with_range(const std::vector<double>& coords, std::shared_ptr<KDNode<T>> node,
+                             double range, std::vector<std::shared_ptr<KDNode<T>>>& found) const
+    {
+        if (node->subspace_dist_to_point(coords) > range)
+            return;
+        auto cur_dist = node->dist(coords);
+        if (cur_dist < range) {
+            found.emplace_back(node);
+        }
+        if (node->right() && node->right()->subspace_dist_to_point(coords) < range) {
+            _explore_with_range(coords, node->right(), range, found);
+        }
+        if (node->left() && node->left()->subspace_dist_to_point(coords) < range) {
+            _explore_with_range(coords, node->left(), range, found);
+        }
+    }
+
 public:
     KDTree()
             : m_root(nullptr), m_dim(0)
@@ -130,5 +147,15 @@ public:
             idx--;
         }
         return cur_best;
+    }
+
+    std::vector<std::shared_ptr<KDNode<T>>> range_search(const std::vector<double>& coords_, double range) const
+    {
+        if (!m_root) {
+            return {nullptr};
+        }
+        std::vector<std::shared_ptr<KDNode<T>>> found;
+        _explore_with_range(coords_, m_root, range, found);
+        return found;
     }
 };
