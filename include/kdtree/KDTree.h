@@ -39,8 +39,6 @@ private:
     void _explore_with_range(const std::vector<double>& coords, std::shared_ptr<KDNode<T>> node,
                              double range, std::vector<std::shared_ptr<KDNode<T>>>& found) const
     {
-        if (node->subspace_dist_to_point(coords) > range)
-            return;
         auto cur_dist = node->dist(coords);
         if (cur_dist < range) {
             found.emplace_back(node);
